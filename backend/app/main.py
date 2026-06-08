@@ -54,6 +54,21 @@ def get_avg_reading_time(db: Session = Depends(get_db)) -> list[dict]:
     return analytics.average_reading_time(db)
 
 
+@app.get("/api/metrics/weekday-distribution")
+def get_weekday_distribution(db: Session = Depends(get_db)) -> list[dict]:
+    return analytics.weekday_distribution(db)
+
+
+@app.get("/api/metrics/long-read-ratio")
+def get_long_read_ratio(db: Session = Depends(get_db)) -> list[dict]:
+    return analytics.long_read_ratio(db)
+
+
+@app.get("/api/metrics/summary")
+def get_summary(db: Session = Depends(get_db)) -> dict:
+    return analytics.summary_kpis(db)
+
+
 @app.get("/api/metrics/top-keywords")
 def get_top_keywords(db: Session = Depends(get_db)) -> list[dict]:
     texts = [row[0] for row in db.query(Article.content).all()]

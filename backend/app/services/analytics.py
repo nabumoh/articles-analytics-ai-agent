@@ -65,3 +65,56 @@ def average_reading_time(db: Session) -> list[dict]:
         ORDER BY average_minutes DESC
         """,
     )
+
+
+def weekday_distribution(db: Session) -> list[dict]:
+    return query_rows(
+        db,
+        """
+        SELECT
+            TO_CHAR(published_at, 'Dy') AS weekday,
+            EXTRACT(ISODOW FROM published_at)::int AS weekday_order,
+            COUNT(*)::int AS total
+        FROM articles
+        GROUP BY weekday, weekday_order
+        ORDER BY weekday_order
+        """,
+    )
+
+
+def long_read_ratio(db: Session, threshold: int = 6) -> list[dict]:
+    return query_rows(
+        db,
+        f"""
+        SELECT
+            CASE WHEN reading_time_minutes >= {threshold} THEN 'Long Reads' ELSE 'Short Reads' END AS bucket,
+            COUNT(*)::int AS total
+        FROM articles
+        GROUP BY bucket
+        ORDER BY total DESC
+        """,
+    )
+
+
+def summary_kpis(db: Session) -> dict:
+    rows = query_rows(
+        db,
+        """
+        SELECT
+            COUNT(*)::int AS total_articles,
+            COUNT(DISTINCT source)::int AS total_sources,
+            COUNT(DISTINCT category)::int AS total_categories,
+            ROUND(AVG(reading_time_minutes)::numeric, 2) AS avg_read_minutes,
+            MIN(DATE(published_at)) AS first_day,
+            MAX(DATE(published_at)) AS last_day
+        FROM articles
+        """,
+    )
+    return rows[0] if rows else {
+        "total_articles": 0,
+        "total_sources": 0,
+        "total_categories": 0,
+        "avg_read_minutes": 0,
+        "first_day": None,
+        "last_day": None,
+    }

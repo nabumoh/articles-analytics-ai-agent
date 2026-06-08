@@ -21,31 +21,40 @@ import ChartCard from './components/ChartCard';
 const COLORS = ['#0c6ca8', '#f15a24', '#2d936c', '#ffc145', '#7b2cbf', '#ef476f'];
 
 export default function App() {
+  const [summary, setSummary] = useState(null);
   const [byDay, setByDay] = useState([]);
   const [bySource, setBySource] = useState([]);
   const [byCategory, setByCategory] = useState([]);
   const [byLanguage, setByLanguage] = useState([]);
   const [avgReading, setAvgReading] = useState([]);
+  const [weekdayDist, setWeekdayDist] = useState([]);
+  const [longReadRatio, setLongReadRatio] = useState([]);
   const [tagCloud, setTagCloud] = useState([]);
   const [question, setQuestion] = useState('How many articles were published this week?');
   const [answer, setAnswer] = useState('');
 
   useEffect(() => {
     async function load() {
-      const [d1, d2, d3, d4, d5, d6] = await Promise.all([
+      const [d0, d1, d2, d3, d4, d5, d6, d7, d8] = await Promise.all([
+        fetchMetric('summary'),
         fetchMetric('articles-by-day'),
         fetchMetric('articles-by-source'),
         fetchMetric('articles-by-category'),
         fetchMetric('articles-by-language'),
         fetchMetric('avg-reading-time'),
+        fetchMetric('weekday-distribution'),
+        fetchMetric('long-read-ratio'),
         fetchMetric('tag-cloud')
       ]);
+      setSummary(d0);
       setByDay(d1);
       setBySource(d2);
       setByCategory(d3);
       setByLanguage(d4);
       setAvgReading(d5);
-      setTagCloud(d6.map((item) => ({ value: item.word, count: item.count })));
+      setWeekdayDist(d6);
+      setLongReadRatio(d7);
+      setTagCloud(d8.map((item) => ({ value: item.word, count: item.count })));
     }
 
     load().catch((err) => {
@@ -67,6 +76,15 @@ export default function App() {
       </header>
 
       <main className="grid">
+        {summary && (
+          <section className="kpi-row">
+            <div className="kpi"><span>Total Articles</span><strong>{summary.total_articles}</strong></div>
+            <div className="kpi"><span>Sources</span><strong>{summary.total_sources}</strong></div>
+            <div className="kpi"><span>Categories</span><strong>{summary.total_categories}</strong></div>
+            <div className="kpi"><span>Avg Read Time</span><strong>{summary.avg_read_minutes} min</strong></div>
+          </section>
+        )}
+
         <ChartCard title="Articles Per Day">
           <ResponsiveContainer width="100%" height={280}>
             <LineChart data={byDay}>
@@ -126,6 +144,31 @@ export default function App() {
               <Tooltip />
               <Bar dataKey="average_minutes" fill="#7b2cbf" />
             </BarChart>
+          </ResponsiveContainer>
+        </ChartCard>
+
+        <ChartCard title="Weekday Distribution">
+          <ResponsiveContainer width="100%" height={280}>
+            <LineChart data={weekdayDist}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="weekday" />
+              <YAxis allowDecimals={false} />
+              <Tooltip />
+              <Line dataKey="total" stroke="#ef476f" strokeWidth={3} />
+            </LineChart>
+          </ResponsiveContainer>
+        </ChartCard>
+
+        <ChartCard title="Long Read vs Short Read">
+          <ResponsiveContainer width="100%" height={280}>
+            <PieChart>
+              <Pie data={longReadRatio} dataKey="total" nameKey="bucket" outerRadius={95} label>
+                {longReadRatio.map((entry, idx) => (
+                  <Cell key={entry.bucket} fill={COLORS[idx % COLORS.length]} />
+                ))}
+              </Pie>
+              <Tooltip />
+            </PieChart>
           </ResponsiveContainer>
         </ChartCard>
 

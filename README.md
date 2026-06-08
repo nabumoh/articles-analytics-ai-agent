@@ -52,7 +52,10 @@ Dashboard insights:
 3. Articles per category
 4. Articles per language
 5. Average reading time by source
-6. Tag cloud from cleaned article text
+6. Weekday publication distribution
+7. Long-read vs short-read ratio
+8. KPI summary tiles
+9. Tag cloud from cleaned article text
 
 Text processing pipeline:
 - lowercasing
@@ -108,6 +111,9 @@ If your MindsDB version has different `CREATE AGENT` syntax, use Studio Agent Bu
 - `GET /api/metrics/articles-by-category`
 - `GET /api/metrics/articles-by-language`
 - `GET /api/metrics/avg-reading-time`
+- `GET /api/metrics/weekday-distribution`
+- `GET /api/metrics/long-read-ratio`
+- `GET /api/metrics/summary`
 - `GET /api/metrics/top-keywords`
 - `GET /api/metrics/tag-cloud`
 - `POST /api/ai/ask`
@@ -124,4 +130,33 @@ Sample body for AI ask:
 
 - Sample CSV is included in `backend/data/articles_sample.csv`.
 - On backend startup, CSV records are inserted once using URL as unique key.
-- Replace sample CSV with your full assignment dataset while keeping column names.
+- You can replace sample CSV with your real dataset even if headers differ.
+
+### CSV Mapping For Real Datasets
+
+The loader auto-detects common aliases for these canonical fields:
+- title
+- source
+- category
+- language
+- published_at
+- reading_time_minutes
+- url
+- content
+
+If your column names still differ, set overrides in `.env`:
+
+```bash
+CSV_COL_TITLE=headline
+CSV_COL_SOURCE=publisher
+CSV_COL_CATEGORY=topic
+CSV_COL_LANGUAGE=lang
+CSV_COL_PUBLISHED_AT=publish_date
+CSV_COL_READING_TIME_MINUTES=read_time
+CSV_COL_URL=link
+CSV_COL_CONTENT=body
+```
+
+### Loom Video Script
+
+Use `docs/loom_script.md` for a ready 2-4 minute demo narration.
