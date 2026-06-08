@@ -1,0 +1,48 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: articles_db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-articles_db}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ./backend
+    container_name: articles_backend
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql+psycopg2://postgres:postgres@db:5432/articles_db}
+      MINDSDB_URL: ${MINDSDB_URL:-http://mindsdb:47334}
+      CSV_PATH: /app/data/articles_sample.csv
+    depends_on:
+      - db
+      - mindsdb
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: articles_frontend
+    depends_on:
+      - backend
+    ports:
+      - "8080:80"
+
+  mindsdb:
+    image: mindsdb/mindsdb:latest
+    container_name: articles_mindsdb
+    ports:
+      - "47334:47334"
+      - "47335:47335"
+    volumes:
+      - mindsdb_storage:/root/mdb_storage
+
+volumes:
+  db_data:
+  mindsdb_storage:
