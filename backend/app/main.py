@@ -82,6 +82,6 @@ def get_tag_cloud(db: Session = Depends(get_db)) -> list[dict]:
 
 
 @app.post("/api/ai/ask")
-def ask_ai(request: QuestionRequest) -> dict:
-    answer = mindsdb_client.ask_question(request.question)
+def ask_ai(request: QuestionRequest, db: Session = Depends(get_db)) -> dict:
+    answer = mindsdb_client.ask_question(request.question, db=db)
     return {"question": request.question, "answer": answer}

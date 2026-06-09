@@ -99,9 +99,17 @@ If your MindsDB version has different `CREATE AGENT` syntax, use Studio Agent Bu
 
 - How many articles were published this week?
 - Which source published the most articles?
+- Total articles
+- Count from a specific source
 - What are the top recurring topics?
 - Are technology articles increasing over time?
 - Which categories have the fewest articles?
+
+## Dashboard Screenshots
+
+![Dashboard Screenshot 1](docs/screenshots/s1.png)
+![Dashboard Screenshot 2](docs/screenshots/s2.png)
+![Dashboard Screenshot 3](docs/screenshots/s3.png)
 
 ## API Endpoints
 
@@ -130,7 +138,7 @@ Sample body for AI ask:
 
 - Sample CSV is included in `backend/data/articles_sample.csv`.
 - On backend startup, CSV records are inserted once using URL as unique key.
-- You can replace sample CSV with your real dataset even if headers differ.
+
 
 ### CSV Mapping For Real Datasets
 
@@ -144,19 +152,3 @@ The loader auto-detects common aliases for these canonical fields:
 - url
 - content
 
-If your column names still differ, set overrides in `.env`:
-
-```bash
-CSV_COL_TITLE=headline
-CSV_COL_SOURCE=publisher
-CSV_COL_CATEGORY=topic
-CSV_COL_LANGUAGE=lang
-CSV_COL_PUBLISHED_AT=publish_date
-CSV_COL_READING_TIME_MINUTES=read_time
-CSV_COL_URL=link
-CSV_COL_CONTENT=body
-```
-
-### Loom Video Script
-
-Use `docs/loom_script.md` for a ready 2-4 minute demo narration.
