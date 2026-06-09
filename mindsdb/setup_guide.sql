@@ -10,13 +10,13 @@ PARAMETERS = {
   "password": "postgres"
 };
 
--- This agent structure may vary by MindsDB version.
--- If CREATE AGENT syntax differs, use MindsDB Studio Agent builder and keep name: articles_qa_agent.
+-- For free local setup, run Ollama on your machine and use provider 'ollama'.
 CREATE AGENT articles_qa_agent
-USING
-  model = 'gpt-4o-mini',
-  prompt_template = 'You are an analyst for a news articles database. Answer using factual data from available tables.',
-  tools = ['sql'];
+USING model = {
+  'provider': 'ollama',
+  'model_name': 'llama3.1',
+  'base_url': 'http://host.docker.internal:11434/v1'
+};
 
 -- Example ask:
 -- SELECT answer FROM mindsdb.articles_qa_agent WHERE question = 'How many articles are from TechDaily?';
