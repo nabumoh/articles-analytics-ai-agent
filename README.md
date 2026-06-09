@@ -111,6 +111,10 @@ If your MindsDB version has different `CREATE AGENT` syntax, use Studio Agent Bu
 ![Dashboard Screenshot 2](docs/screenshots/s2.png)
 ![Dashboard Screenshot 3](docs/screenshots/s3.png)
 
+## Demo Record
+
+[Watch demo_record.mp4](docs/screenshots/demo_record.mp4)
+
 ## API Endpoints
 
 - `GET /health`
